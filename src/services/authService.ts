@@ -5,7 +5,7 @@
 
 import type { Profile } from '@/types';
 import {
-  readCollection, writeCollection, readSession, writeSession, clearSession,
+  readCollection, writeCollection, readSession, writeSession, clearSession, nowIso,
 } from '@/services/storage';
 
 /**
@@ -87,11 +87,18 @@ export function accountMustChange(profileId: string): boolean {
 }
 
 /**
- * First-login credential setup: the owner replaces their temporary
- * email/password with their own. No current-password check — they just
- * authenticated with the temporary credentials.
+ * First-login account setup: the owner sets their own name and replaces the
+ * temporary email/password with their own. No current-password check — they
+ * just authenticated with the temporary credentials.
  */
-export function completeCredentialSetup(profileId: string, newEmail: string, newPassword: string): void {
+export function completeCredentialSetup(
+  profileId: string,
+  fullName: string,
+  newEmail: string,
+  newPassword: string
+): void {
+  const name = fullName.trim();
+  if (!name) throw new Error('Enter your name');
   const email = newEmail.trim().toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a valid email address');
   if (newPassword.length < 6) throw new Error('Password must be at least 6 characters');
@@ -113,6 +120,13 @@ export function completeCredentialSetup(profileId: string, newEmail: string, new
         ? { ...a, email, password: newPassword, must_change_credentials: false }
         : a
     )
+  );
+
+  // Update the owner's display name on their profile
+  const profiles = readCollection<Profile>('profiles');
+  writeCollection(
+    'profiles',
+    profiles.map((p) => (p.id === profileId ? { ...p, full_name: name, updated_at: nowIso() } : p))
   );
 }
 

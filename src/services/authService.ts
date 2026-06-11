@@ -102,6 +102,28 @@ export function migrateAccounts(): void {
   if (changed) writeCollection('accounts', migrated);
 }
 
+/**
+ * Production cleanup: remove the seeded `staff` placeholder if it's still
+ * unclaimed (factory username + factory password). Runs on bootstrap so
+ * browsers seeded with the placeholder self-clean. Skipped in demo mode
+ * (the showcase keeps the staff demo) and never touches a claimed account.
+ */
+export function removeUnclaimedStaffPlaceholder(): void {
+  if (DEMO_MODE) return;
+  const accounts = readCollection<LocalAccount>('accounts');
+  const placeholder = accounts.find((a) => a.profile_id === 'profile-staff-1');
+  if (!placeholder) return;
+
+  const u = accountUsername(placeholder).toLowerCase();
+  const isUnclaimedFactory =
+    (u === 'staff' || u === 'staff@charmcafe.ph') && placeholder.password === 'staff2026';
+  if (!isUnclaimedFactory) return; // a real staff member claimed it — leave it alone
+
+  writeCollection('accounts', accounts.filter((a) => a.profile_id !== 'profile-staff-1'));
+  const profiles = readCollection<Profile>('profiles');
+  writeCollection('profiles', profiles.filter((p) => p.id !== 'profile-staff-1'));
+}
+
 export function getCurrentProfile(): Profile | null {
   const profileId = readSession();
   if (!profileId) return null;

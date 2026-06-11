@@ -9,6 +9,7 @@ import {
   type ProductDraft, type VariantDraft,
 } from '@/services/productService';
 import { getInventory } from '@/services/inventoryService';
+import { defaultProductImage } from '@/data/productImages';
 import { fileToResizedDataUrl } from '@/utils/image';
 import type { Product, ProductCategory } from '@/types';
 import { formatMoney } from '@/utils/format';
@@ -207,7 +208,7 @@ export function ProductEditor({ product, categories, onClose }: ProductEditorPro
           <label className={labelClass}>Photo (optional)</label>
           <div className="flex items-center gap-4">
             <div className="flex-none w-20 h-20 rounded-xl overflow-hidden border border-line">
-              <ProductImage src={draft.imageUrl} alt={draft.name || 'Product'} iconSize={30} />
+              <ProductImage src={draft.imageUrl ?? defaultProductImage(draft.id)} alt={draft.name || 'Product'} iconSize={30} />
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
@@ -216,7 +217,7 @@ export function ProductEditor({ product, categories, onClose }: ProductEditorPro
                   onClick={() => fileInputRef.current?.click()}
                   className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-line bg-cream/50 text-[12px] font-semibold text-espresso hover:border-caramel transition-colors"
                 >
-                  <ImagePlus size={14} /> {draft.imageUrl ? 'Change photo' : 'Upload photo'}
+                  <ImagePlus size={14} /> {(draft.imageUrl ?? defaultProductImage(draft.id)) ? 'Change photo' : 'Upload photo'}
                 </button>
                 {draft.imageUrl && (
                   <button
@@ -228,7 +229,9 @@ export function ProductEditor({ product, categories, onClose }: ProductEditorPro
                   </button>
                 )}
               </div>
-              <p className="text-[10.5px] text-faint">Shown on the POS. Auto-resized — any photo works.</p>
+              <p className="text-[10.5px] text-faint">
+                Shown on the POS. Auto-resized — uploading overrides the default photo.
+              </p>
             </div>
             <input
               ref={fileInputRef}

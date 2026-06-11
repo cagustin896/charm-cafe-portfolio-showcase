@@ -3,6 +3,8 @@ import { X, Minus, Plus } from 'lucide-react';
 import type { Product } from '@/types';
 import type { Catalog } from '@/services/catalogService';
 import { useCartStore } from '@/stores/cartStore';
+import { ProductImage } from '@/components/ui/ProductImage';
+import { resolveProductImage } from '@/data/productImages';
 import { formatMoney } from '@/utils/format';
 import { cn } from '@/utils/cn';
 
@@ -66,16 +68,21 @@ export function ItemModal({ product, catalog, showAddOns, onClose }: ItemModalPr
       >
         {/* Header */}
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-line">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-caramel">
-              {catalog.categories.find((c) => c.id === product.category_id)?.name ?? ''}
-            </p>
-            <h2 className="font-heading text-[20px] font-semibold text-dark-roast mt-0.5">
-              {product.name}
-            </h2>
-            {product.description && (
-              <p className="text-muted text-[12px] mt-1 max-w-[300px]">{product.description}</p>
-            )}
+          <div className="flex items-start gap-3.5 min-w-0">
+            <div className="flex-none w-14 h-14 rounded-xl overflow-hidden border border-line">
+              <ProductImage src={resolveProductImage(product)} alt={product.name} iconSize={22} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-caramel">
+                {catalog.categories.find((c) => c.id === product.category_id)?.name ?? ''}
+              </p>
+              <h2 className="font-heading text-[20px] font-semibold text-dark-roast mt-0.5">
+                {product.name}
+              </h2>
+              {product.description && (
+                <p className="text-muted text-[12px] mt-1 max-w-[260px]">{product.description}</p>
+              )}
+            </div>
           </div>
           <button
             onClick={onClose}

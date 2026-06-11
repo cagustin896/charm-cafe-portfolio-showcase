@@ -116,10 +116,14 @@ export function CartPanel({ catalog: _catalog }: { catalog: Catalog }) {
         </div>
       </div>
 
+      {/* Order body — the items list and the checkout below scroll together, so
+          a long order stays fully reviewable on the way down to the Charge button */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
+
       {/* Line items */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-5 py-1 space-y-2">
+      <div className="px-5 py-1 space-y-2">
         {cart.items.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-3 text-center py-10">
+          <div className="flex flex-col items-center justify-center gap-3 text-center py-16">
             <BrandLogo size={52} className="opacity-30" />
             <p className="text-espresso font-semibold text-[13.5px]">No items yet</p>
             <p className="text-muted text-[12px] max-w-[190px]">
@@ -180,8 +184,8 @@ export function CartPanel({ catalog: _catalog }: { catalog: Catalog }) {
         )}
       </div>
 
-      {/* Checkout */}
-      <div className="flex-none border-t border-line px-5 pt-3.5 pb-5 space-y-3 bg-paper">
+      {/* Checkout — flows directly after the items so it extends down with the order */}
+      <div className="border-t border-line px-5 pt-3.5 pb-5 mt-2 space-y-3">
 
         {/* Discount + payment */}
         <div className="grid grid-cols-2 gap-2">
@@ -324,6 +328,7 @@ export function CartPanel({ catalog: _catalog }: { catalog: Catalog }) {
             )}
           </button>
         </div>
+      </div>
       </div>
 
       {/* Receipt */}

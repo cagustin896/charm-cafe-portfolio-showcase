@@ -80,8 +80,8 @@ export default function SetupAccount() {
       </div>
 
       <div className="relative mb-8 text-center">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-paper border border-line mb-5 shadow-[0_8px_24px_rgba(44,24,16,0.12)]">
-          <BrandLogo size={56} />
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-paper border border-line mb-5 shadow-[0_8px_24px_rgba(44,24,16,0.12)] overflow-hidden">
+          <BrandLogo size={68} />
         </div>
         <h1 className="font-heading text-3xl font-semibold text-dark-roast tracking-tight">
           Welcome to Charm Cafe!

@@ -79,8 +79,8 @@ export function Sidebar() {
 
       {/* Brand */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">
-        <div className="flex-none w-10 h-10 rounded-full bg-paper grid place-items-center shadow-sm">
-          <BrandLogo size={30} />
+        <div className="flex-none w-10 h-10 rounded-full bg-paper grid place-items-center shadow-sm overflow-hidden">
+          <BrandLogo size={38} />
         </div>
         <div className="min-w-0">
           <p className="text-paper font-heading text-[15px] font-semibold leading-tight truncate">

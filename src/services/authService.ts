@@ -23,6 +23,26 @@ export interface LocalAccount {
   must_change_credentials?: boolean;
 }
 
+/**
+ * Factory credentials baked into the seed. These are public (README + the
+ * "Show demo accounts" hint), so any account still on one of these MUST set
+ * its own credentials before entering the app — even on browsers that were
+ * seeded before the forced-setup feature existed.
+ */
+export const SEEDED_DEFAULT_CREDENTIALS = [
+  { profile_id: 'profile-manager', email: 'manager@charmcafe.ph', password: 'charm2026' },
+  { profile_id: 'profile-staff-1', email: 'staff@charmcafe.ph', password: 'staff2026' },
+] as const;
+
+function matchesFactoryDefault(account: LocalAccount): boolean {
+  return SEEDED_DEFAULT_CREDENTIALS.some(
+    (d) =>
+      d.profile_id === account.profile_id &&
+      d.email.toLowerCase() === account.email.toLowerCase() &&
+      d.password === account.password
+  );
+}
+
 export function getCurrentProfile(): Profile | null {
   const profileId = readSession();
   if (!profileId) return null;
@@ -60,7 +80,10 @@ export function getAccountEmail(profileId: string): string | null {
 export function accountMustChange(profileId: string): boolean {
   if (DEMO_MODE) return false;
   const account = readCollection<LocalAccount>('accounts').find((a) => a.profile_id === profileId);
-  return account?.must_change_credentials === true;
+  if (!account) return false;
+  // Explicit flag (fresh seed + manager-issued temp passwords) OR still on a
+  // factory default (catches browsers seeded before this feature shipped).
+  return account.must_change_credentials === true || matchesFactoryDefault(account);
 }
 
 /**

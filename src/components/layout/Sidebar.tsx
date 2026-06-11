@@ -78,7 +78,7 @@ export function Sidebar() {
     <aside className="flex flex-col h-full w-[224px] flex-none bg-dark-roast rounded-l-2xl overflow-hidden select-none">
 
       {/* Brand */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">
+      <div className="flex items-center gap-2.5 pl-3 pr-2 py-5 border-b border-white/[0.08]">
         <div className="flex-none w-12 h-12 rounded-full bg-paper grid place-items-center shadow-sm overflow-hidden">
           <BrandLogo size={38} />
         </div>
@@ -86,7 +86,7 @@ export function Sidebar() {
           <p className="text-paper font-heading text-[15px] font-semibold leading-tight truncate">
             {settings?.business_name ?? 'Charm Cafe'}
           </p>
-          <p className="text-taupe/80 text-[10px] font-medium tracking-wide truncate mt-0.5">
+          <p className="text-taupe/80 text-[9.5px] font-medium mt-0.5 whitespace-nowrap">
             {settings?.tagline ?? 'A little charm in every cup'}
           </p>
         </div>

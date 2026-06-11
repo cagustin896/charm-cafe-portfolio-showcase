@@ -186,19 +186,25 @@ export default function POS() {
                     </div>
 
                     {/* Info */}
-                    <div className="flex flex-col flex-1 p-3">
+                    <div className="flex flex-col flex-1 px-3 py-2.5">
                       <span className="font-heading text-[14.5px] font-semibold text-dark-roast leading-snug">
                         {product.name}
                       </span>
-                      <span className="mt-auto pt-2 text-[12.5px] text-muted">
-                        {variants.map((v, i) => (
-                          <span key={v.id}>
-                            {i > 0 && <span className="text-faint"> · </span>}
-                            {variants.length > 1 && <span className="text-faint">{v.size_label} </span>}
-                            <span className="font-semibold text-espresso">{formatMoney(v.price)}</span>
-                          </span>
+                      {/* Each size on its own line, prices aligned — cleaner on narrow cards */}
+                      <div className="mt-auto pt-2 space-y-0.5">
+                        {variants.map((v) => (
+                          <div key={v.id} className="flex items-baseline gap-2 leading-tight">
+                            {variants.length > 1 && (
+                              <span className="w-9 flex-none text-[11px] font-medium text-muted">
+                                {v.size_label}
+                              </span>
+                            )}
+                            <span className="text-[13px] font-semibold text-espresso">
+                              {formatMoney(v.price)}
+                            </span>
+                          </div>
                         ))}
-                      </span>
+                      </div>
                     </div>
                   </button>
                 );

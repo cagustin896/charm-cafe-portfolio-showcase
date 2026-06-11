@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Coffee } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/authStore';
+import { DEMO_MODE } from '@/services/authService';
 import { LogoMark } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 import { toast } from 'sonner';
@@ -158,22 +159,24 @@ export default function Login() {
           </form>
         </div>
 
-        {/* Footnote */}
-        <p className="text-center text-[11.5px] text-muted mt-5">
-          First time?{' '}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              toast.info('Manager: manager@charmcafe.ph / charm2026 · Staff: staff@charmcafe.ph / staff2026', {
-                duration: 8000,
-              });
-            }}
-            className="text-caramel hover:text-espresso underline underline-offset-2 transition-colors"
-          >
-            Show demo accounts
-          </a>
-        </p>
+        {/* Footnote — only the public demo advertises the sample credentials */}
+        {DEMO_MODE && (
+          <p className="text-center text-[11.5px] text-muted mt-5">
+            First time?{' '}
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                toast.info('Manager: manager@charmcafe.ph / charm2026 · Staff: staff@charmcafe.ph / staff2026', {
+                  duration: 8000,
+                });
+              }}
+              className="text-caramel hover:text-espresso underline underline-offset-2 transition-colors"
+            >
+              Show demo accounts
+            </a>
+          </p>
+        )}
       </div>
 
       {/* Bottom brand strip */}

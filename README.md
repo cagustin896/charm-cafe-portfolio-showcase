@@ -1,11 +1,23 @@
-# Charm Cafe Management System
+# Charm Cafe Management System — Portfolio Showcase
 
-Tablet-first POS and back-office system for Charm Cafe, Cebu, Philippines.
-Built with React 19 + Vite 7, TypeScript (strict), TanStack Query, Zustand, Tailwind CSS v4.
+> ### ☕ [Live Demo →](https://charm-cafe-portfolio-showcase.vercel.app)
+>
+> Sign in as **`manager@charmcafe.ph` / `charm2026`** and explore everything — ring up a sale
+> on the POS, receive a delivery in Inventory, run payroll, check the P&L in Analytics.
+> Every visitor gets their **own private sandbox** (all data lives in your browser's
+> localStorage), so nothing you do affects anyone else. Best viewed at tablet/desktop width.
 
-**Current backend: browser localStorage** (single-device mode). The full Supabase backend
-(schema, RLS, RPCs, seed) lives in `supabase/migrations/` ready to swap in when multi-device
-sync is needed — the UI talks only to `src/services/`, so the swap touches no pages.
+This is the public showcase copy of a **real production system** running daily at a cafe in
+Cebu, Philippines. It was rebuilt from a low-code prototype (preserved in [`legacy/`](legacy/))
+into a fully hand-built React application — every module below is functional, not a mockup.
+
+Tablet-first POS and back-office: React 19 + Vite 7, TypeScript (strict), TanStack Query,
+Zustand, Tailwind CSS v4.
+
+**Backend: browser localStorage** behind a service-layer seam (single-device mode by design —
+one tablet is the till). The full Supabase backend (Postgres schema, Row Level Security
+policies, transactional RPCs, seed) lives in [`supabase/migrations/`](supabase/migrations/)
+ready to swap in — the UI talks only to `src/services/`, so the swap touches no pages.
 
 ---
 
@@ -66,6 +78,25 @@ Charm Cafe menu, inventory, and demo accounts on first load.
 
 Roles: **manager** (everything) and **staff** (POS, clock-in, My Day; inventory view and
 expense logging by permission flag). Enforced in the sidebar, routes, and row actions.
+
+---
+
+## Engineering Highlights
+
+- **Atomic sale pipeline** — `completeSale()` preflights stock across the entire cart
+  (variant recipes + add-on recipes) before writing anything, then creates the order,
+  deducts stock, and appends to an append-only movement ledger — mirroring the
+  `complete_sale()` Postgres RPC included in the migrations
+- **Auto-86** — products disable themselves on the POS the moment any recipe ingredient
+  runs out, computed from live stock (mirrors the `product_availability` SQL view)
+- **Exact COGS** — analytics cost every order line from its recipe *and* its add-ons'
+  recipes, so gross margin and the P&L are real, not estimates
+- **Weighted-average costing** — stock-ins recompute unit cost the way an accountant would
+- **Auditable by design** — voids require a reason, restore exact recipe quantities, and
+  write to the same ledger as sales; paid payroll periods lock permanently
+- **Manila-correct** — every "today" is an `Asia/Manila` business day regardless of device tz
+- **Swap-ready architecture** — pages never touch storage; 13 service modules form the
+  adapter seam between UI and persistence
 
 ---
 

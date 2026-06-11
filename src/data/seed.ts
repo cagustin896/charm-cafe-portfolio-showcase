@@ -65,9 +65,9 @@ const profiles: Profile[] = [
 
 const accounts: LocalAccount[] = [
   // Documented demo credentials. Outside demo mode, first sign-in forces the
-  // owner to replace them with their own email + password.
-  { profile_id: 'profile-manager', email: 'manager@charmcafe.ph', password: 'charm2026', must_change_credentials: true },
-  { profile_id: 'profile-staff-1', email: 'staff@charmcafe.ph', password: 'staff2026', must_change_credentials: true },
+  // owner to replace them with their own username + password.
+  { profile_id: 'profile-manager', username: 'manager', password: 'charm2026', must_change_credentials: true },
+  { profile_id: 'profile-staff-1', username: 'staff', password: 'staff2026', must_change_credentials: true },
 ];
 
 // ─── Categories & Units ──────────────────────────────────────────────────────

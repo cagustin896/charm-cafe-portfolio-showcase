@@ -110,7 +110,7 @@ export default function StaffManagement() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-line">
-                  <Th>Name</Th><Th>Role</Th><Th>Email</Th><Th>Permissions</Th>
+                  <Th>Name</Th><Th>Role</Th><Th>Username</Th><Th>Permissions</Th>
                   <Th align="right">Pay Rate</Th><Th align="center">Status</Th><Th align="right">Edit</Th>
                 </tr>
               </thead>
@@ -136,7 +136,7 @@ export default function StaffManagement() {
                         {p.cafe_role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[12px] text-muted">{p.email ?? '—'}</td>
+                    <td className="px-4 py-3 text-[12px] text-muted">{p.username ?? '—'}</td>
                     <td className="px-4 py-3 text-[11.5px] text-muted">
                       {p.cafe_role === 'manager'
                         ? 'Full access'

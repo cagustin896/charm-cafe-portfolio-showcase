@@ -17,10 +17,17 @@ export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
 
 export interface LocalAccount {
   profile_id: string;
-  email: string;
+  username: string;
   password: string;
   /** Seeded/temporary credentials — owner must set their own on first sign-in. */
   must_change_credentials?: boolean;
+  /** Legacy field from the email-login era; migrated to username on bootstrap. */
+  email?: string;
+}
+
+/** Username of an account, tolerating legacy email-era records. */
+export function accountUsername(account: LocalAccount): string {
+  return (account.username ?? account.email ?? '').trim();
 }
 
 /**
@@ -30,17 +37,46 @@ export interface LocalAccount {
  * seeded before the forced-setup feature existed.
  */
 export const SEEDED_DEFAULT_CREDENTIALS = [
-  { profile_id: 'profile-manager', email: 'manager@charmcafe.ph', password: 'charm2026' },
-  { profile_id: 'profile-staff-1', email: 'staff@charmcafe.ph', password: 'staff2026' },
+  { profile_id: 'profile-manager', username: 'manager', password: 'charm2026' },
+  { profile_id: 'profile-staff-1', username: 'staff', password: 'staff2026' },
 ] as const;
 
 function matchesFactoryDefault(account: LocalAccount): boolean {
   return SEEDED_DEFAULT_CREDENTIALS.some(
     (d) =>
       d.profile_id === account.profile_id &&
-      d.email.toLowerCase() === account.email.toLowerCase() &&
+      d.username.toLowerCase() === accountUsername(account).toLowerCase() &&
       d.password === account.password
   );
+}
+
+/** Validate a username: 3-20 chars, letters/numbers/dot/underscore/hyphen, no spaces. */
+function validateUsername(username: string): string {
+  const u = username.trim();
+  if (u.length < 3) throw new Error('Username must be at least 3 characters');
+  if (u.length > 20) throw new Error('Username must be 20 characters or fewer');
+  if (!/^[A-Za-z0-9._-]+$/.test(u)) {
+    throw new Error('Username can use letters, numbers, dot, underscore, hyphen — no spaces');
+  }
+  return u;
+}
+
+/**
+ * One-time migration: copy legacy `email` records to `username`. Idempotent,
+ * runs on bootstrap so browsers seeded during the email-login era keep working.
+ */
+export function migrateAccounts(): void {
+  const accounts = readCollection<LocalAccount>('accounts');
+  let changed = false;
+  const migrated = accounts.map((a) => {
+    if (a.username == null && a.email != null) {
+      changed = true;
+      const { email, ...rest } = a;
+      return { ...rest, username: email };
+    }
+    return a;
+  });
+  if (changed) writeCollection('accounts', migrated);
 }
 
 export function getCurrentProfile(): Profile | null {
@@ -50,13 +86,13 @@ export function getCurrentProfile(): Profile | null {
   return profiles.find((p) => p.id === profileId && p.is_active) ?? null;
 }
 
-export function signIn(email: string, password: string): Profile {
+export function signIn(username: string, password: string): Profile {
   const accounts = readCollection<LocalAccount>('accounts');
   const account = accounts.find(
-    (a) => a.email.toLowerCase() === email.trim().toLowerCase()
+    (a) => accountUsername(a).toLowerCase() === username.trim().toLowerCase()
   );
   if (!account || account.password !== password) {
-    throw new Error('Incorrect email or password');
+    throw new Error('Incorrect username or password');
   }
 
   const profiles = readCollection<Profile>('profiles');
@@ -72,8 +108,9 @@ export function signOut(): void {
   clearSession();
 }
 
-export function getAccountEmail(profileId: string): string | null {
-  return readCollection<LocalAccount>('accounts').find((a) => a.profile_id === profileId)?.email ?? null;
+export function getAccountUsername(profileId: string): string | null {
+  const account = readCollection<LocalAccount>('accounts').find((a) => a.profile_id === profileId);
+  return account ? accountUsername(account) : null;
 }
 
 /** Does this profile's account still carry seeded/temporary credentials? */
@@ -94,13 +131,12 @@ export function accountMustChange(profileId: string): boolean {
 export function completeCredentialSetup(
   profileId: string,
   fullName: string,
-  newEmail: string,
+  newUsername: string,
   newPassword: string
 ): void {
   const name = fullName.trim();
   if (!name) throw new Error('Enter your name');
-  const email = newEmail.trim().toLowerCase();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a valid email address');
+  const username = validateUsername(newUsername);
   if (newPassword.length < 6) throw new Error('Password must be at least 6 characters');
 
   const accounts = readCollection<LocalAccount>('accounts');
@@ -109,15 +145,15 @@ export function completeCredentialSetup(
   if (newPassword === account.password) {
     throw new Error('Choose a different password than the temporary one');
   }
-  if (accounts.some((a) => a.profile_id !== profileId && a.email.toLowerCase() === email)) {
-    throw new Error('That email is already in use');
+  if (accounts.some((a) => a.profile_id !== profileId && accountUsername(a).toLowerCase() === username.toLowerCase())) {
+    throw new Error('That username is already taken');
   }
 
   writeCollection(
     'accounts',
     accounts.map((a) =>
       a.profile_id === profileId
-        ? { ...a, email, password: newPassword, must_change_credentials: false }
+        ? { profile_id: a.profile_id, username, password: newPassword, must_change_credentials: false }
         : a
     )
   );

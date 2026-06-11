@@ -4,7 +4,7 @@ import { Eye, EyeOff, ShieldCheck, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/authStore';
-import { completeCredentialSetup, getAccountEmail, getCurrentProfile } from '@/services/authService';
+import { completeCredentialSetup, getAccountUsername, getCurrentProfile } from '@/services/authService';
 import { LogoMark } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 
@@ -20,8 +20,8 @@ export default function SetupAccount() {
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState('');
-  // Controlled-with-default: show the current account email until the user types
-  const [emailDraft, setEmailDraft] = useState<string | null>(null);
+  // Controlled-with-default: show the current account username until the user types
+  const [usernameDraft, setUsernameDraft] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +34,7 @@ export default function SetupAccount() {
     return <Navigate to={profile.cafe_role === 'manager' ? '/dashboard' : '/staff-dashboard'} replace />;
   }
 
-  const email = emailDraft !== null ? emailDraft : (getAccountEmail(profile.id) ?? '');
+  const usernameValue = usernameDraft !== null ? usernameDraft : (getAccountUsername(profile.id) ?? '');
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -46,7 +46,7 @@ export default function SetupAccount() {
     }
     setSaving(true);
     try {
-      completeCredentialSetup(profile.id, fullName, email, password);
+      completeCredentialSetup(profile.id, fullName, usernameValue, password);
       // Refresh the store so the new name shows in the greeting, sidebar, etc.
       setProfile(getCurrentProfile());
       setMustChangeCredentials(false);
@@ -126,15 +126,15 @@ export default function SetupAccount() {
 
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-muted uppercase tracking-wide">
-                Your email
+                Your username
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmailDraft(e.target.value)}
+                type="text"
+                value={usernameValue}
+                onChange={(e) => setUsernameDraft(e.target.value)}
                 required
-                placeholder="you@charmcafe.ph"
-                autoComplete="email"
+                placeholder="e.g. andrea"
+                autoComplete="username"
                 className={fieldClass}
               />
               <p className="text-[10.5px] text-faint">You'll use this to sign in from now on.</p>

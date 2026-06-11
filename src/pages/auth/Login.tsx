@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 export default function Login() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const profile = await signIn(email, password);
+      const profile = await signIn(username, password);
       if (useAuthStore.getState().mustChangeCredentials) {
         navigate('/setup-account', { replace: true });
         return;
@@ -32,7 +32,7 @@ export default function Login() {
       navigate(profile.cafe_role === 'manager' ? '/dashboard' : '/staff-dashboard', { replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Sign in failed';
-      setError(message.includes('Invalid') ? 'Incorrect email or password' : message);
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -84,19 +84,19 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Email */}
+            {/* Username */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-muted uppercase tracking-wide">
-                Email Address
+                Username
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="username"
                 autoFocus
-                placeholder="you@charmcafe.ph"
+                placeholder="e.g. manager"
                 className={cn(
                   'w-full h-11 px-4 rounded-lg border bg-cream/60 text-dark-roast text-sm placeholder:text-faint',
                   'outline-none transition-all',
@@ -138,7 +138,7 @@ export default function Login() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading || !username || !password}
               className={cn(
                 'w-full h-11 rounded-lg font-semibold text-[14px] transition-all mt-2',
                 'bg-caramel text-paper hover:bg-caramel-dark',
@@ -167,7 +167,7 @@ export default function Login() {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                toast.info('Manager: manager@charmcafe.ph / charm2026 · Staff: staff@charmcafe.ph / staff2026', {
+                toast.info('Manager: manager / charm2026 · Staff: staff / staff2026', {
                   duration: 8000,
                 });
               }}

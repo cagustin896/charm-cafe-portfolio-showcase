@@ -8,7 +8,7 @@ import type {
   InventoryItem, Product, ProductVariant, RecipeItem, AddOn, Asset,
 } from '@/types';
 import {
-  writeCollection, writeSingleton, isSeeded, markSeeded, nowIso,
+  writeCollection, writeSingleton, readSingleton, isSeeded, markSeeded, nowIso,
 } from '@/services/storage';
 import { DEMO_MODE, type LocalAccount } from '@/services/authService';
 import { seedShowcaseActivity } from '@/data/showcaseSeed';
@@ -391,3 +391,20 @@ export function seedIfNeeded(): void {
 
 /** Set before a reset+reload so the fresh seed stays clean (no demo activity). */
 export const SKIP_DEMO_ACTIVITY_KEY = 'charm-cafe:skip-demo-activity';
+
+/** Load the showcase sample activity into the current data (Settings → demo). */
+export function loadDemoActivity(): void {
+  seedShowcaseActivity();
+}
+
+/** Remove all demo activity, restoring a clean operating base (menu intact). */
+export function clearDemoActivity(): void {
+  writeCollection('inventory_items', inventoryItems);
+  writeCollection('orders', []);
+  writeCollection('stock_movements', []);
+  writeCollection('purchases', []);
+  writeCollection('expenses', []);
+  writeCollection('time_logs', []);
+  writeCollection('payroll_periods', []);
+  writeSingleton<CafeSettings>({ ...readSingleton<CafeSettings>(DEFAULT_SETTINGS), or_current: 0 });
+}

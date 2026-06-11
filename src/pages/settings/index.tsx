@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Store, ReceiptText, KeyRound, DatabaseBackup, Download, Upload, AlertTriangle,
+  Sparkles, Wand2, Eraser,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageShell, SectionPanel } from '@/components/ui/PageShell';
 import { inputClass, labelClass } from '@/components/ui/Modal';
 import { getSettings, saveSettings } from '@/services/settingsService';
-import { changePassword } from '@/services/authService';
+import { changePassword, DEMO_MODE } from '@/services/authService';
 import { exportAll, importAll, type BackupFile } from '@/services/storage';
-import { SKIP_DEMO_ACTIVITY_KEY } from '@/data/seed';
+import { SKIP_DEMO_ACTIVITY_KEY, loadDemoActivity, clearDemoActivity } from '@/data/seed';
 import { useAuthStore } from '@/stores/authStore';
 import { todayKey } from '@/utils/format';
 import { cn } from '@/utils/cn';
@@ -120,6 +121,19 @@ export default function SettingsPage() {
     sessionStorage.setItem(SKIP_DEMO_ACTIVITY_KEY, '1');
     toast.success('Data reset — reloading…');
     setTimeout(() => window.location.reload(), 800);
+  }
+
+  function handleLoadDemo() {
+    loadDemoActivity();
+    toast.success('Sample data loaded — reloading…');
+    setTimeout(() => window.location.reload(), 600);
+  }
+
+  function handleClearDemo() {
+    if (!window.confirm('Clear the sample sales, expenses, and history? The menu stays. You can load it again anytime.')) return;
+    clearDemoActivity();
+    toast.success('Sample data cleared — reloading…');
+    setTimeout(() => window.location.reload(), 600);
   }
 
   const nextOrderNo = settings
@@ -262,6 +276,38 @@ export default function SettingsPage() {
             </button>
           </div>
         </SectionPanel>
+
+        {/* ── Demo data (showcase only) ── */}
+        {DEMO_MODE && (
+          <SectionPanel
+            title="Sample Data"
+            className="xl:col-span-3"
+            action={<Sparkles size={15} className="text-taupe" />}
+          >
+            <div className="rounded-xl border border-caramel/25 bg-caramel-soft/50 px-4 py-3 flex items-start gap-2.5 mb-4">
+              <Sparkles size={15} className="flex-none text-caramel mt-0.5" />
+              <p className="text-[12px] text-espresso leading-relaxed">
+                This is the public demo. Load ~2 weeks of sample sales, expenses, and staff
+                activity to see every dashboard and report filled in — handy for review and
+                screenshots — or clear it for clean, empty-state shots. The menu stays either way.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                onClick={handleLoadDemo}
+                className="flex items-center gap-2 px-4 py-3.5 rounded-xl bg-caramel text-paper text-[13px] font-semibold hover:bg-caramel-dark transition-colors shadow-[0_2px_8px_rgba(164,124,88,0.3)]"
+              >
+                <Wand2 size={15} /> Load sample data
+              </button>
+              <button
+                onClick={handleClearDemo}
+                className="flex items-center gap-2 px-4 py-3.5 rounded-xl border border-line bg-cream/50 text-espresso text-[13px] font-semibold hover:border-caramel transition-colors"
+              >
+                <Eraser size={15} /> Clear sample data
+              </button>
+            </div>
+          </SectionPanel>
+        )}
       </div>
     </PageShell>
   );

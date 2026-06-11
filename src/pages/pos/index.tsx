@@ -6,6 +6,7 @@ import { formatMoney } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { useCartStore } from '@/stores/cartStore';
 import { ProductImage } from '@/components/ui/ProductImage';
+import { resolveProductImage } from '@/data/productImages';
 import type { Product } from '@/types';
 import { ItemModal } from './ItemModal';
 import { CartPanel } from './CartPanel';
@@ -172,8 +173,8 @@ export default function POS() {
                     )}
                   >
                     {/* Photo */}
-                    <div className="relative w-full aspect-[4/3] bg-cream overflow-hidden">
-                      <ProductImage src={product.image_url} alt={product.name} iconSize={36} />
+                    <div className="relative w-full aspect-square bg-cream overflow-hidden">
+                      <ProductImage src={resolveProductImage(product)} alt={product.name} iconSize={36} />
                       <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-paper/90 backdrop-blur-sm text-caramel text-[9.5px] font-bold uppercase tracking-wider border border-line/60">
                         {categoryName}
                       </span>

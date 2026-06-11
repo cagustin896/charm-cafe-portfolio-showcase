@@ -10,6 +10,14 @@ dist/
 .env.*
 !.env.example
 
+# Heavy source art — the app bundles optimized copies (src/assets/), so the
+# large originals stay local instead of bloating the repo.
+assets/menu-hero/*.png
+assets/menu-hero/*.jpg
+assets/menu-hero/*.jpeg
+assets/menu-hero/*.webp
+assets/logo/*.png
+
 # Local tooling (machine-specific)
 .claude/
 .vercel/

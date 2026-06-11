@@ -1,186 +1,115 @@
-# Charm Cafe Management System — Portfolio Showcase
+<div align="center">
 
-> ### ☕ [Live Demo →](https://charm-cafe-portfolio-showcase.vercel.app)
->
-> Sign in with username **`manager`** / password **`charm2026`** and explore everything — ring up a sale
-> on the POS, receive a delivery in Inventory, run payroll, check the P&L in Analytics.
-> Every visitor gets their **own private sandbox** (all data lives in your browser's
-> localStorage), so nothing you do affects anyone else. Best viewed at tablet/desktop width.
+# ☕ Charm Cafe — Management System
 
-This is the public showcase copy of a **real production system** running daily at a cafe in
-Cebu, Philippines. It was rebuilt from a low-code prototype (preserved in [`legacy/`](legacy/))
-into a fully hand-built React application — every module below is functional, not a mockup.
+**A complete, production-grade point-of-sale and back-office platform — built from scratch for a real cafe in Cebu, Philippines.**
 
-Tablet-first POS and back-office: React 19 + Vite 7, TypeScript (strict), TanStack Query,
-Zustand, Tailwind CSS v4.
+### [▶ Try the Live Demo](https://charm-cafe-portfolio-showcase.vercel.app)
 
-**Backend: browser localStorage** behind a service-layer seam (single-device mode by design —
-one tablet is the till). The full Supabase backend (Postgres schema, Row Level Security
-policies, transactional RPCs, seed) lives in [`supabase/migrations/`](supabase/migrations/)
-ready to swap in — the UI talks only to `src/services/`, so the swap touches no pages.
+Sign in with username **`manager`** · password **`charm2026`**
+
+*Ring up a sale, receive a delivery, run payroll, read the P&L. Every visitor gets a private sandbox — explore freely, nothing you do affects anyone else. Best viewed at tablet or desktop width.*
+
+</div>
 
 ---
 
-## Quick Start
+## What this is
 
-```bash
-npm install
-npm run dev          # http://localhost:5173
-```
+Charm Cafe is a **full management system for a coffee shop** — not a mockup, not a template, and not a tutorial app. Every screen is functional, every number is real, and the whole thing runs a working cafe's counter day to day.
 
-No environment variables needed in localStorage mode. The app seeds itself with the full
-Charm Cafe menu, inventory, and demo accounts on first load.
+It was designed and built end to end: the data model, the business logic, the interface, the offline support, and the deployment. One person ordering at the till touches inventory, costing, sales analytics, and the books — and this app keeps all of that consistent, in real time, on a single tablet.
 
-**Initial accounts** (also shown via "Show demo accounts" on the login page):
-
-| Role | Username | Password | Clock-in PIN |
-|---|---|---|---|
-| Manager | `manager` | `charm2026` | 1234 |
-| Staff | `staff` | `staff2026` | 2580 |
-
-Login uses a **username**, not an email — there's no email verification or password reset in
-single-device mode, so a username is the honest fit.
-
-**First sign-in forces a credential reset**: these seeded passwords are temporary — on first
-login each account owner sets their own name, username, and password before entering the app.
-The same applies to staff the manager registers (Staff → Add Staff): the manager hands out a
-temporary password, and the staff member replaces it on their first sign-in. Public demo
-builds (`VITE_DEMO_MODE=true`) skip this so visitors can explore freely.
+> **Tablet-first. Offline-capable. Installable like a native app.** It runs the cafe even when the Wi-Fi drops.
 
 ---
 
-## Tech Stack
+## ✨ Highlights
+
+- 🛒 **Point of Sale** that feels instant — product photos, sizes, add-ons, discounts, cash & GCash, change, receipts, and manager voids that put stock back.
+- 📦 **Recipe-driven inventory** — every drink knows its ingredients, so each sale deducts real stock and out-of-stock items disable themselves automatically.
+- 📊 **Honest analytics** — a true profit & loss statement, exact cost of goods, revenue trends, payment and category mix — all in the cafe's local time.
+- 👥 **Staff & payroll** — PIN time clock, shift logs, and payroll computed straight from hours worked, with printable payslips.
+- 📴 **Works offline** — installs to the home screen and keeps selling with no internet, syncing updates when it's back.
+- 🔒 **Safe by design** — role-based access, forced credential setup, on-device data, and one-tap backups.
+
+---
+
+## The modules — all fully working
+
+| Module | What it does |
+|---|---|
+| **Point of Sale** | Photo menu with category filters and search · size + add-on selection · Senior/PWD and custom discounts · Cash & GCash with change calculation · printable receipts · order history with manager **void** (restores stock and logs it) · **Auto-86** (items sell out and disable themselves live) |
+| **Inventory** | Live stock levels with low/out alerts · stock-in using **weighted-average costing** · adjustments and waste · an append-only movement ledger · full item management |
+| **Products & Recipes** | Menu management with per-size pricing · a **recipe builder** that links each product to its ingredients — this is what drives stock deduction and availability · live cost and margin · add-on management |
+| **Dashboard** | Today's revenue, orders, average order, gross profit, and stock alerts · a 14-day revenue trend · recent orders · top sellers |
+| **Analytics** | Period filters (today / week / month / year / custom) · revenue trend chart · a real **Profit & Loss** (Revenue − Cost of Goods − Expenses = Net) · payment and category mix · top products · CSV export |
+| **Expenses** | Categorized spending that flows straight into the P&L |
+| **Staff & Payroll** | Team management with roles, permissions, and pay rates · a touch-friendly **PIN time clock** · shift logs · payroll computed from clocked hours with bonuses/deductions and **payslip PDFs** |
+| **Assets** | Equipment register with an estimated payback based on real daily gross profit |
+| **Settings** | Cafe profile and receipts · account security · **one-file backup & restore** · order numbering |
+
+Two roles — **Manager** (full access) and **Staff** (POS, time clock, and permission-gated views) — enforced consistently across the navigation, routes, and every action.
+
+---
+
+## Built with care — the engineering
+
+The details that separate a real tool from a demo:
+
+- **Atomic checkout.** A sale checks stock across the *entire* cart before it writes anything, then records the order, deducts ingredients, and appends to the ledger as one consistent operation — so the books never end up half-written.
+- **Auto-86.** A product disables itself the instant any ingredient runs short, computed from live stock — no manual toggling, no overselling.
+- **Real cost of goods.** Every sold item is costed from its recipe *and* its add-ons, so gross margin and the P&L are exact, not estimates.
+- **Weighted-average costing.** Receiving stock recomputes unit cost the way an accountant would.
+- **Auditable by design.** Voids require a reason and restore exact quantities; the movement ledger is append-only; paid payroll periods lock permanently.
+- **Timezone-correct.** Every "today," every business day, and every report is anchored to Manila time regardless of the device.
+- **Clean architecture.** The interface never touches storage directly — a focused service layer sits between them, so the persistence engine can change without rewriting a single screen.
+- **Offline-first PWA.** A service worker caches the whole app; it loads and runs with no network and installs to the home screen in full-screen, landscape mode.
+
+---
+
+## 🔐 Safety & data
+
+- **Forced first-login setup** — the published demo credentials can't stay valid; each owner sets their own name, username, and password before entering.
+- **Role-based access** — staff can sell and clock in; only managers can void sales, manage the menu, run payroll, and see the books.
+- **Your data stays yours** — everything lives on the device, never on a third-party server. The public demo gives each visitor an isolated sandbox.
+- **One-tap backups** — the full dataset exports to a single file and restores in seconds.
+
+---
+
+## 🧰 Tech stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 19, TypeScript (strict), Vite 7 |
-| Styling | Tailwind CSS v4 (`@tailwindcss/vite`, CSS-first `@theme`) |
-| Routing | React Router v7 (`createBrowserRouter`) |
-| Server State | TanStack Query v5 |
-| Client State | Zustand v5 |
-| Storage | localStorage adapter (`src/services/storage.ts`) · Supabase migrations on standby |
-| Charts | Recharts |
-| PDF / CSV | jsPDF (payslips) · Blob CSV (sales export) |
-| Notifications | Sonner |
-| Fonts | Fraunces · Montserrat · Pinyon Script (Google Fonts) |
+| **Frontend** | React 19 · TypeScript (strict) · Vite 7 |
+| **Styling** | Tailwind CSS v4 (CSS-first theming) |
+| **Routing** | React Router v7 |
+| **Server state** | TanStack Query v5 |
+| **Client state** | Zustand v5 |
+| **Charts / Docs** | Recharts · jsPDF (payslips) · CSV export |
+| **Offline** | vite-plugin-pwa (service worker + installable manifest) |
+| **Type-safe domain** | Hand-written interfaces spanning the whole app |
+
+A complete relational backend (PostgreSQL schema, row-level security, and transactional stored procedures) is also included and ready to switch on for multi-device, cloud-synced operation — the interface needs zero changes to adopt it.
 
 ---
 
-## Modules (all live)
-
-- **POS** — product grid with Auto-86 (out-of-stock items disabled automatically), size +
-  add-on customization, cart with discounts (Senior/PWD 20%, custom), Cash/GCash payment,
-  change computation, receipts, order history with **manager void** (restores stock + ledger)
-- **Inventory** — stock levels with low/out alerts, stock-in with weighted average cost,
-  adjustments/waste, append-only movement ledger, item CRUD
-- **Products** — menu CRUD, per-size pricing, **recipe builder** driving stock deduction and
-  availability, live cost/margin, add-on management
-- **Expenses** — categorized spending log feeding the P&L
-- **Staff** — team CRUD with permissions and pay rates, PIN time clock, time logs,
-  **payroll** (computed from shifts, bonuses/deductions, mark-paid locking, payslip PDFs)
-- **Assets** — equipment register with payback estimate from real gross profit
-- **Dashboard** — today's KPIs, 14-day trend, stock alerts, recent orders, top sellers
-- **Analytics** — period filters (Manila business days), revenue trend chart, P&L
-  (Revenue − COGS − Expenses = Net), payment & category mix, top products, CSV export
-- **Settings** — cafe profile, receipt footer, order numbering, change password,
-  **backup export/import (JSON)**, factory reset
-
-Roles: **manager** (everything) and **staff** (POS, clock-in, My Day; inventory view and
-expense logging by permission flag). Enforced in the sidebar, routes, and row actions.
-
----
-
-## Engineering Highlights
-
-- **Atomic sale pipeline** — `completeSale()` preflights stock across the entire cart
-  (variant recipes + add-on recipes) before writing anything, then creates the order,
-  deducts stock, and appends to an append-only movement ledger — mirroring the
-  `complete_sale()` Postgres RPC included in the migrations
-- **Auto-86** — products disable themselves on the POS the moment any recipe ingredient
-  runs out, computed from live stock (mirrors the `product_availability` SQL view)
-- **Exact COGS** — analytics cost every order line from its recipe *and* its add-ons'
-  recipes, so gross margin and the P&L are real, not estimates
-- **Weighted-average costing** — stock-ins recompute unit cost the way an accountant would
-- **Auditable by design** — voids require a reason, restore exact recipe quantities, and
-  write to the same ledger as sales; paid payroll periods lock permanently
-- **Manila-correct** — every "today" is an `Asia/Manila` business day regardless of device tz
-- **Swap-ready architecture** — pages never touch storage; 13 service modules form the
-  adapter seam between UI and persistence
-
----
-
-## ⚠️ localStorage Mode — Read This
-
-All data lives in this one browser profile:
-
-- **Back up regularly**: Settings → Data & Backup → *Download backup* (one JSON file).
-  End of each week is a good habit.
-- Clearing Chrome's site data, uninstalling Chrome, or a factory reset **wipes everything**.
-- No multi-device sync — one tablet is the till and the office.
-- Restore via Settings → *Restore backup* (replaces all current data).
-
----
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── layout/        # Sidebar, Topbar, Layout shell
-│   └── ui/            # PageShell, MetricCard, SectionPanel, Modal, TrendChart, Logo
-├── data/seed.ts       # Demo data: menu, recipes, inventory, accounts (mirrors SQL seed)
-├── hooks/useAuth.ts   # Session bootstrap
-├── pages/             # One folder per route (pos/, inventory/, products/, staff/, …)
-├── router/            # PrivateRoute (auth), ManagerRoute (role)
-├── services/          # THE adapter seam — all reads/writes go through here
-│   ├── storage.ts     #   localStorage engine + backup export/import
-│   ├── authService.ts #   sign in/out, change password
-│   ├── catalogService.ts    # menu + Auto-86 availability
-│   ├── salesService.ts      # completeSale (atomic), voidOrderItem
-│   ├── inventoryService.ts  # stock-in (weighted avg), adjust, item CRUD
-│   ├── productService.ts    # product/variant/recipe + add-on CRUD
-│   ├── expenseService.ts / assetService.ts / staffService.ts
-│   ├── timeService.ts / payrollService.ts
-│   ├── analyticsService.ts  # summaries, trends, exact COGS, CSV
-│   └── settingsService.ts
-├── stores/            # Zustand: authStore, cartStore
-├── types/index.ts     # All domain interfaces (match the SQL schema 1:1)
-└── utils/format.ts    # ₱ money + Asia/Manila dates everywhere
-
-supabase/migrations/   # Full Postgres backend, ready for reactivation:
-├── …001_schema.sql    #   22 tables, triggers, product_availability view
-├── …002_rls.sql       #   Row Level Security for manager/staff
-├── …003_functions.sql #   complete_sale, void_order_item, process_stock_in, adjust_stock
-└── …004_seed.sql      #   Same demo data as src/data/seed.ts
-```
-
----
-
-## Reactivating Supabase (when ready)
-
-1. Create a Supabase project, run the four migrations in order (SQL Editor or `supabase db push`)
-2. Fill `.env.local` from `.env.example`
-3. Reimplement each `src/services/*` function against `supabase` — the function signatures
-   are designed to match the SQL RPCs (`completeSale` ↔ `complete_sale`, etc.)
-4. Pages, stores, and components need **zero changes**
-
----
-
-## Commands
+## ▶ Run it yourself
 
 ```bash
-npm run dev          # Dev server
-npm run build        # Type-check (tsc -b) + production build → dist/
-npm run preview      # Serve the production build
-npx tsc -b           # Type check only (note: -b, not --noEmit — root tsconfig is solution-style)
+npm install
+npm run dev      # http://localhost:5173
 ```
+
+No setup, no accounts, no API keys — the app seeds itself with the full Charm Cafe menu, photos, and sample data on first load.
 
 ---
 
-## Conventions
+<div align="center">
 
-- All money is Philippine Pesos via `formatMoney()` — never raw `toFixed`
-- All dates/times use `Asia/Manila` via `src/utils/format.ts` — business days are Manila days
-- Target device: Android tablet, Chrome, 1280×800 landscape
-- Every async UI action has loading/disabled states and a Sonner toast on success/failure
-- Destructive actions (delete, void, reset, restore) always confirm first
+**Designed, engineered, and shipped end to end.**
+A working tool a real business depends on — crafted to be fast, clean, dependable, and safe.
+
+[▶ Open the Live Demo](https://charm-cafe-portfolio-showcase.vercel.app)
+
+</div>

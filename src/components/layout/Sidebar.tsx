@@ -75,7 +75,7 @@ export function Sidebar() {
     : '??';
 
   return (
-    <aside className="flex flex-col min-h-[calc(100vh-2rem)] w-[224px] bg-dark-roast rounded-l-2xl overflow-hidden select-none">
+    <aside className="flex flex-col h-full w-[224px] flex-none bg-dark-roast rounded-l-2xl overflow-hidden select-none">
 
       {/* Brand */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">

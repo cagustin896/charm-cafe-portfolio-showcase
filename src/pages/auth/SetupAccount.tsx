@@ -4,7 +4,7 @@ import { Eye, EyeOff, ShieldCheck, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/authStore';
-import { completeCredentialSetup, getAccountEmail } from '@/services/authService';
+import { completeCredentialSetup, getAccountEmail, getCurrentProfile } from '@/services/authService';
 import { LogoMark } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 
@@ -16,8 +16,10 @@ import { cn } from '@/utils/cn';
 export default function SetupAccount() {
   const { profile, isLoading, mustChangeCredentials, signOut } = useAuth();
   const setMustChangeCredentials = useAuthStore((s) => s.setMustChangeCredentials);
+  const setProfile = useAuthStore((s) => s.setProfile);
   const navigate = useNavigate();
 
+  const [fullName, setFullName] = useState('');
   // Controlled-with-default: show the current account email until the user types
   const [emailDraft, setEmailDraft] = useState<string | null>(null);
   const [password, setPassword] = useState('');
@@ -44,7 +46,9 @@ export default function SetupAccount() {
     }
     setSaving(true);
     try {
-      completeCredentialSetup(profile.id, email, password);
+      completeCredentialSetup(profile.id, fullName, email, password);
+      // Refresh the store so the new name shows in the greeting, sidebar, etc.
+      setProfile(getCurrentProfile());
       setMustChangeCredentials(false);
       toast.success('Account secured — welcome aboard!');
       navigate(profile.cafe_role === 'manager' ? '/dashboard' : '/staff-dashboard', { replace: true });
@@ -80,10 +84,11 @@ export default function SetupAccount() {
           <LogoMark size={28} className="text-caramel" />
         </div>
         <h1 className="font-heading text-3xl font-semibold text-dark-roast tracking-tight">
-          Welcome, {profile.full_name.split(' ')[0]}!
+          Welcome to Charm Cafe!
         </h1>
         <p className="text-muted text-[13px] mt-2 max-w-[340px]">
-          You signed in with a temporary password. Set your own credentials to secure your account.
+          You signed in with a temporary password. Set up your account with your own
+          name and credentials to secure it.
         </p>
       </div>
 
@@ -104,6 +109,23 @@ export default function SetupAccount() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold text-muted uppercase tracking-wide">
+                Your name
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                autoFocus
+                placeholder="e.g. Juan dela Cruz"
+                autoComplete="name"
+                className={fieldClass}
+              />
+              <p className="text-[10.5px] text-faint">Shown across the app — use your real name.</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-bold text-muted uppercase tracking-wide">
                 Your email
               </label>
               <input
@@ -111,7 +133,6 @@ export default function SetupAccount() {
                 value={email}
                 onChange={(e) => setEmailDraft(e.target.value)}
                 required
-                autoFocus
                 placeholder="you@charmcafe.ph"
                 autoComplete="email"
                 className={fieldClass}
@@ -162,7 +183,7 @@ export default function SetupAccount() {
 
             <button
               type="submit"
-              disabled={saving || !password || !confirm}
+              disabled={saving || !fullName.trim() || !password || !confirm}
               className={cn(
                 'w-full h-11 rounded-lg font-semibold text-[14px] transition-all mt-2',
                 'bg-caramel text-paper hover:bg-caramel-dark',

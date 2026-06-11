@@ -1,0 +1,15 @@
+# Dependencies & build output
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+*.log
+
+# Environment — never commit real values (template .env.example IS committed)
+.env
+.env.*
+!.env.example
+
+# Local tooling (machine-specific)
+.claude/
+.vercel/

@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Typography --- */
+  --font-heading: "Fraunces", Georgia, serif;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Pinyon Script", cursive;
+
+  /* --- Brand Colors --- */
+  --color-cream: #F5F1E8;
+  --color-sand: #DCC5A4;
+  --color-caramel: #A47C58;
+  --color-caramel-dark: #8D6543;
+  --color-caramel-soft: #F3EADc;
+  --color-taupe: #BDA39B;
+  --color-espresso: #854F2F;
+  --color-dark-roast: #2C1810;
+  --color-paper: #FEFCF8;
+  --color-line: #E8DECE;
+  --color-line-strong: #D8C9B8;
+  --color-muted: #8A7565;
+  --color-faint: #B8A99C;
+
+  /* --- Status Colors (warm-toned to sit on cream) --- */
+  --color-sage: #5F8B6B;
+  --color-sage-dark: #4C7658;
+  --color-sage-soft: #EDF4EF;
+  --color-amber: #C47C2B;
+  --color-amber-soft: #FDF3E4;
+  --color-danger: #B85B50;
+  --color-danger-soft: #FAE8E6;
+}
+
+/* --- Base Resets --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-dark-roast);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Scrollbar Styling --- */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-sand);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-taupe);
+}
+
+/* --- Focus Ring (brand-colored) --- */
+:focus-visible {
+  outline: 2px solid var(--color-caramel);
+  outline-offset: 2px;
+}
+
+/* --- Print Styles --- */
+@media print {
+  body {
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

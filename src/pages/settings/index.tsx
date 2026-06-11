@@ -9,6 +9,7 @@ import { inputClass, labelClass } from '@/components/ui/Modal';
 import { getSettings, saveSettings } from '@/services/settingsService';
 import { changePassword } from '@/services/authService';
 import { exportAll, importAll, type BackupFile } from '@/services/storage';
+import { SKIP_DEMO_ACTIVITY_KEY } from '@/data/seed';
 import { useAuthStore } from '@/stores/authStore';
 import { todayKey } from '@/utils/format';
 import { cn } from '@/utils/cn';
@@ -115,6 +116,8 @@ export default function SettingsPage() {
       if (k && k.startsWith('charm-cafe:')) keys.push(k);
     }
     keys.forEach((k) => localStorage.removeItem(k));
+    // Reset gives a clean slate — skip the demo activity on the re-seed
+    sessionStorage.setItem(SKIP_DEMO_ACTIVITY_KEY, '1');
     toast.success('Data reset — reloading…');
     setTimeout(() => window.location.reload(), 800);
   }

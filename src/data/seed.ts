@@ -11,6 +11,7 @@ import {
   writeCollection, writeSingleton, isSeeded, markSeeded, nowIso,
 } from '@/services/storage';
 import { DEMO_MODE, type LocalAccount } from '@/services/authService';
+import { seedShowcaseActivity } from '@/data/showcaseSeed';
 
 const T = nowIso();
 
@@ -379,4 +380,14 @@ export function seedIfNeeded(): void {
   writeCollection('payroll_periods', []);
 
   markSeeded();
+
+  // Public demo only: populate ~2 weeks of realistic activity for review and
+  // screenshots. A Settings reset sets the skip flag, so reset gives a clean
+  // slate. Production (non-demo) never gets fake sales.
+  if (DEMO_MODE && sessionStorage.getItem(SKIP_DEMO_ACTIVITY_KEY) !== '1') {
+    seedShowcaseActivity();
+  }
 }
+
+/** Set before a reset+reload so the fresh seed stays clean (no demo activity). */
+export const SKIP_DEMO_ACTIVITY_KEY = 'charm-cafe:skip-demo-activity';

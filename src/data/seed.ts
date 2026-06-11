@@ -10,7 +10,7 @@ import type {
 import {
   writeCollection, writeSingleton, isSeeded, markSeeded, nowIso,
 } from '@/services/storage';
-import type { LocalAccount } from '@/services/authService';
+import { DEMO_MODE, type LocalAccount } from '@/services/authService';
 
 const T = nowIso();
 
@@ -34,40 +34,46 @@ export const DEFAULT_SETTINGS: CafeSettings = {
 
 // ─── Profiles & Accounts ─────────────────────────────────────────────────────
 
-const profiles: Profile[] = [
-  {
-    id: 'profile-manager',
-    full_name: 'Christian Agustin',
-    cafe_role: 'manager',
-    can_view_inventory: true,
-    can_add_expenses: true,
-    is_active: true,
-    daily_rate: null,
-    hourly_rate: null,
-    pin_code: '1234',
-    created_at: T,
-    updated_at: T,
-  },
-  {
-    id: 'profile-staff-1',
-    full_name: 'Maria Santos',
-    cafe_role: 'staff',
-    can_view_inventory: true,
-    can_add_expenses: false,
-    is_active: true,
-    daily_rate: 450,
-    hourly_rate: null,
-    pin_code: '2580',
-    created_at: T,
-    updated_at: T,
-  },
-];
+const managerProfile: Profile = {
+  id: 'profile-manager',
+  full_name: 'Christian Agustin',
+  cafe_role: 'manager',
+  can_view_inventory: true,
+  can_add_expenses: true,
+  is_active: true,
+  daily_rate: null,
+  hourly_rate: null,
+  pin_code: '1234',
+  created_at: T,
+  updated_at: T,
+};
+
+// Sample staff member — only seeded on the public demo so recruiters can try
+// the staff-role view. Production starts with just the manager; real staff are
+// created from inside the app (Staff → Add Staff).
+const staffProfile: Profile = {
+  id: 'profile-staff-1',
+  full_name: 'Maria Santos',
+  cafe_role: 'staff',
+  can_view_inventory: true,
+  can_add_expenses: false,
+  is_active: true,
+  daily_rate: 450,
+  hourly_rate: null,
+  pin_code: '2580',
+  created_at: T,
+  updated_at: T,
+};
+
+const profiles: Profile[] = DEMO_MODE ? [managerProfile, staffProfile] : [managerProfile];
 
 const accounts: LocalAccount[] = [
   // Documented demo credentials. Outside demo mode, first sign-in forces the
   // owner to replace them with their own username + password.
   { profile_id: 'profile-manager', username: 'manager', password: 'charm2026', must_change_credentials: true },
-  { profile_id: 'profile-staff-1', username: 'staff', password: 'staff2026', must_change_credentials: true },
+  ...(DEMO_MODE
+    ? [{ profile_id: 'profile-staff-1', username: 'staff', password: 'staff2026', must_change_credentials: true } as LocalAccount]
+    : []),
 ];
 
 // ─── Categories & Units ──────────────────────────────────────────────────────

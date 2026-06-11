@@ -26,6 +26,7 @@ export interface ProductDraft {
   category_id: string | null;
   description: string;
   is_available: boolean;
+  imageUrl: string | null; // data URL (uploaded photo) or null
   variants: VariantDraft[];
 }
 
@@ -98,7 +99,7 @@ export function saveProduct(draft: ProductDraft): Product {
     id: productId,
     name,
     category_id: draft.category_id,
-    image_url: existing?.image_url ?? null,
+    image_url: draft.imageUrl,
     description: draft.description.trim() || null,
     is_available: draft.is_available,
     sort_order: existing?.sort_order ?? (Math.max(0, ...products.map((p) => p.sort_order)) + 1),

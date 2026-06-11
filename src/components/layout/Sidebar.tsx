@@ -14,7 +14,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { LogoMark } from '@/components/ui/Logo';
+import { BrandLogo } from '@/components/ui/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore, selectIsManager, selectCanViewInventory, selectCanAddExpenses } from '@/stores/authStore';
 import { getSettings } from '@/services/settingsService';
@@ -79,8 +79,8 @@ export function Sidebar() {
 
       {/* Brand */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">
-        <div className="flex-none w-9 h-9 rounded-full bg-caramel/20 border border-caramel/30 grid place-items-center text-caramel">
-          <LogoMark size={22} />
+        <div className="flex-none w-10 h-10 rounded-full bg-paper grid place-items-center shadow-sm">
+          <BrandLogo size={30} />
         </div>
         <div className="min-w-0">
           <p className="text-paper font-heading text-[15px] font-semibold leading-tight truncate">

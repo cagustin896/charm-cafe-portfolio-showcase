@@ -4,7 +4,7 @@ import { Eye, EyeOff, Coffee } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/authStore';
 import { DEMO_MODE } from '@/services/authService';
-import { LogoMark } from '@/components/ui/Logo';
+import { BrandLogo } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 import { toast } from 'sonner';
 
@@ -56,8 +56,8 @@ export default function Login() {
 
       {/* Header brand */}
       <div className="relative mb-10 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dark-roast mb-5 shadow-lg shadow-dark-roast/20">
-          <LogoMark size={28} className="text-caramel" />
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-paper border border-line mb-5 shadow-[0_8px_24px_rgba(44,24,16,0.12)]">
+          <BrandLogo size={56} />
         </div>
         <h1 className="font-heading text-4xl font-semibold text-dark-roast tracking-tight">
           Charm Cafe

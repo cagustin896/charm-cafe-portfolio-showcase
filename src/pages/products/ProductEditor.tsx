@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Modal, inputClass, selectClass, labelClass, PrimaryButton } from '@/components/ui/Modal';
+import { ProductImage } from '@/components/ui/ProductImage';
 import {
   saveProduct, deleteProduct, countProductSales, recipeCost,
   type ProductDraft, type VariantDraft,
 } from '@/services/productService';
 import { getInventory } from '@/services/inventoryService';
+import { fileToResizedDataUrl } from '@/utils/image';
 import type { Product, ProductCategory } from '@/types';
 import { formatMoney } from '@/utils/format';
 import { cn } from '@/utils/cn';
@@ -26,6 +28,7 @@ function toDraft(product: Product | null): ProductDraft {
       category_id: null,
       description: '',
       is_available: true,
+      imageUrl: null,
       variants: [{ id: null, size_label: 'Regular', price: 0, recipe: [] }],
     };
   }
@@ -35,6 +38,7 @@ function toDraft(product: Product | null): ProductDraft {
     category_id: product.category_id,
     description: product.description ?? '',
     is_available: product.is_available,
+    imageUrl: product.image_url ?? null,
     variants: (product.variants ?? []).map((v) => ({
       id: v.id,
       size_label: v.size_label,
@@ -55,8 +59,18 @@ export function ProductEditor({ product, categories, onClose }: ProductEditorPro
 
   const [draft, setDraft] = useState<ProductDraft>(() => toDraft(product));
   const [activeVariant, setActiveVariant] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const variant = draft.variants[activeVariant] as VariantDraft | undefined;
+
+  async function handleImagePick(file: File) {
+    try {
+      const { dataUrl } = await fileToResizedDataUrl(file);
+      setDraft((d) => ({ ...d, imageUrl: dataUrl }));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not load that image');
+    }
+  }
 
   function patchVariant(index: number, patch: Partial<VariantDraft>) {
     setDraft((d) => ({
@@ -186,6 +200,48 @@ export function ProductEditor({ product, categories, onClose }: ProductEditorPro
             placeholder="Shown on the order screen"
             className={inputClass}
           />
+        </div>
+
+        {/* ── Photo ── */}
+        <div className="space-y-1.5">
+          <label className={labelClass}>Photo (optional)</label>
+          <div className="flex items-center gap-4">
+            <div className="flex-none w-20 h-20 rounded-xl overflow-hidden border border-line">
+              <ProductImage src={draft.imageUrl} alt={draft.name || 'Product'} iconSize={30} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-line bg-cream/50 text-[12px] font-semibold text-espresso hover:border-caramel transition-colors"
+                >
+                  <ImagePlus size={14} /> {draft.imageUrl ? 'Change photo' : 'Upload photo'}
+                </button>
+                {draft.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setDraft((d) => ({ ...d, imageUrl: null }))}
+                    className="flex items-center gap-1 h-9 px-3 rounded-lg border border-line text-[12px] font-semibold text-muted hover:text-danger hover:border-danger/40 transition-colors"
+                  >
+                    <X size={13} /> Remove
+                  </button>
+                )}
+              </div>
+              <p className="text-[10.5px] text-faint">Shown on the POS. Auto-resized — any photo works.</p>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImagePick(file);
+                e.target.value = '';
+              }}
+            />
+          </div>
         </div>
 
         <label className="flex items-center justify-between rounded-xl border border-line bg-cream/40 px-4 py-3 cursor-pointer">

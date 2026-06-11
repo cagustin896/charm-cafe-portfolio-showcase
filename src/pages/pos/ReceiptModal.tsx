@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import type { Order } from '@/types';
-import { LogoMark } from '@/components/ui/Logo';
+import { BrandLogo } from '@/components/ui/Logo';
 import { getSettings } from '@/services/settingsService';
 import { formatMoney, formatDateTime } from '@/utils/format';
 
@@ -97,7 +97,7 @@ export function ReceiptModal({ order, onClose }: ReceiptModalProps) {
         {/* Footer */}
         <div className="px-6 pb-6">
           <div className="flex items-center justify-center gap-1.5 text-[10.5px] text-taupe pb-4">
-            <LogoMark size={12} />
+            <BrandLogo size={14} />
             <span>{settings?.receipt_footer ?? 'Salamat, see you again!'}</span>
           </div>
           <button

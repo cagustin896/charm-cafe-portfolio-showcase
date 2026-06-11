@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthStore } from '@/stores/authStore';
 import { completeCredentialSetup, getAccountUsername, getCurrentProfile } from '@/services/authService';
-import { LogoMark } from '@/components/ui/Logo';
+import { BrandLogo } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 
 /**
@@ -80,8 +80,8 @@ export default function SetupAccount() {
       </div>
 
       <div className="relative mb-8 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-dark-roast mb-5 shadow-lg shadow-dark-roast/20">
-          <LogoMark size={28} className="text-caramel" />
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-paper border border-line mb-5 shadow-[0_8px_24px_rgba(44,24,16,0.12)]">
+          <BrandLogo size={56} />
         </div>
         <h1 className="font-heading text-3xl font-semibold text-dark-roast tracking-tight">
           Welcome to Charm Cafe!

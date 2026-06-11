@@ -1,4 +1,25 @@
 import { cn } from '@/utils/cn';
+import logoUrl from '@/assets/charm-cafe-logo.png';
+
+interface BrandLogoProps {
+  size?: number;
+  className?: string;
+}
+
+/** The Charm Cafe logo image (brown line art). Sits best on a light surface. */
+export function BrandLogo({ size = 40, className }: BrandLogoProps) {
+  return (
+    <img
+      src={logoUrl}
+      alt="Charm Cafe"
+      width={size}
+      height={size}
+      draggable={false}
+      className={cn('object-contain select-none', className)}
+      style={{ width: size, height: size }}
+    />
+  );
+}
 
 interface LogoMarkProps {
   className?: string;

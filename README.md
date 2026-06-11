@@ -31,12 +31,18 @@ npm run dev          # http://localhost:5173
 No environment variables needed in localStorage mode. The app seeds itself with the full
 Charm Cafe menu, inventory, and demo accounts on first load.
 
-**Demo accounts** (also shown via "Show demo accounts" on the login page):
+**Initial accounts** (also shown via "Show demo accounts" on the login page):
 
 | Role | Email | Password | Clock-in PIN |
 |---|---|---|---|
 | Manager | `manager@charmcafe.ph` | `charm2026` | 1234 |
 | Staff | `staff@charmcafe.ph` | `staff2026` | 2580 |
+
+**First sign-in forces a credential reset**: these seeded passwords are temporary — on first
+login each account owner sets their own email + password before entering the app. The same
+applies to staff the manager registers (Staff → Add Staff): the manager hands out a temporary
+password, and the staff member replaces it on their first sign-in. Public demo builds
+(`VITE_DEMO_MODE=true`) skip this so visitors can explore freely.
 
 ---
 

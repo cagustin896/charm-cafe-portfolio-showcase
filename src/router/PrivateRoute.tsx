@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 
 export function PrivateRoute() {
-  const { profile, isLoading } = useAuthStore();
+  const { profile, isLoading, mustChangeCredentials } = useAuthStore();
 
   if (isLoading) {
     return (
@@ -17,6 +17,11 @@ export function PrivateRoute() {
 
   if (!profile) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Temporary credentials — finish account setup before entering the app
+  if (mustChangeCredentials) {
+    return <Navigate to="/setup-account" replace />;
   }
 
   return <Outlet />;

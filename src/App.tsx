@@ -5,6 +5,7 @@ import { ManagerRoute } from '@/router/ManagerRoute';
 
 // Auth
 import Login from '@/pages/auth/Login';
+import SetupAccount from '@/pages/auth/SetupAccount';
 
 // Pages
 import Dashboard from '@/pages/dashboard/index';
@@ -22,6 +23,10 @@ import SettingsPage from '@/pages/settings/index';
 const router = createBrowserRouter([
   // Public routes
   { path: '/login', element: <Login /> },
+
+  // First-login credential setup (authenticated, but outside the app shell —
+  // guards itself and redirects away once setup is complete)
+  { path: '/setup-account', element: <SetupAccount /> },
 
   // Protected routes — requires auth
   {

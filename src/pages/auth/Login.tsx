@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Coffee } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/authStore';
 import { LogoMark } from '@/components/ui/Logo';
 import { cn } from '@/utils/cn';
 import { toast } from 'sonner';
@@ -22,6 +23,10 @@ export default function Login() {
 
     try {
       const profile = await signIn(email, password);
+      if (useAuthStore.getState().mustChangeCredentials) {
+        navigate('/setup-account', { replace: true });
+        return;
+      }
       toast.success(`Welcome back, ${profile.full_name.split(' ')[0]}!`);
       navigate(profile.cafe_role === 'manager' ? '/dashboard' : '/staff-dashboard', { replace: true });
     } catch (err) {

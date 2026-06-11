@@ -46,7 +46,7 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
         rate: Number(rate) || 0,
         pinCode: pin.trim() || null,
       };
-      if (isEdit) updateStaff(staff.id, input);
+      if (isEdit) updateStaff(staff.id, input, currentUser?.id);
       else createStaff(input);
     },
     onSuccess: () => {
@@ -125,7 +125,7 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <label className={labelClass}>{isEdit ? 'New password' : 'Password'}</label>
+            <label className={labelClass}>{isEdit ? 'Reset password' : 'Temporary password'}</label>
             <input
               type="text"
               value={password}
@@ -133,6 +133,11 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
               placeholder={isEdit ? 'Leave blank to keep' : 'Min 6 characters'}
               className={inputClass}
             />
+            {(!isEdit || staff.id !== currentUser?.id) && (
+              <p className="text-[10.5px] text-faint">
+                They'll be asked to set their own password on their next sign-in.
+              </p>
+            )}
           </div>
         </div>
 

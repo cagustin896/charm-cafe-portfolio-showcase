@@ -13,3 +13,5 @@ dist/
 # Local tooling (machine-specific)
 .claude/
 .vercel/
+
+.vercel

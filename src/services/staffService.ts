@@ -71,11 +71,15 @@ export function createStaff(input: StaffInput): Profile {
 
   const profiles = readCollection<Profile>('profiles');
   writeCollection('profiles', [...profiles, profile]);
-  writeCollection('accounts', [...accounts, { profile_id: profile.id, email, password: input.password }]);
+  writeCollection('accounts', [
+    ...accounts,
+    // Manager hands out a temporary password — the staff member sets their own on first sign-in
+    { profile_id: profile.id, email, password: input.password, must_change_credentials: true },
+  ]);
   return profile;
 }
 
-export function updateStaff(profileId: string, input: StaffInput): Profile {
+export function updateStaff(profileId: string, input: StaffInput, currentUserId?: string): Profile {
   const name = input.fullName.trim();
   const email = input.email.trim().toLowerCase();
   if (!name) throw new Error('Full name is required');
@@ -104,15 +108,23 @@ export function updateStaff(profileId: string, input: StaffInput): Profile {
   };
   writeCollection('profiles', profiles.map((p) => (p.id === profileId ? updated : p)));
 
-  // Update / create the login account
+  // Update / create the login account. When a manager resets someone else's
+  // password it's a temporary one — flag the owner to set their own next login.
+  const passwordReset = !!input.password && input.password.length >= 6;
+  const resetByOther = passwordReset && currentUserId !== undefined && profileId !== currentUserId;
   const existingAccount = accounts.find((a) => a.profile_id === profileId);
   const nextAccounts = existingAccount
     ? accounts.map((a) =>
         a.profile_id === profileId
-          ? { ...a, email, password: input.password && input.password.length >= 6 ? input.password : a.password }
+          ? {
+              ...a,
+              email,
+              password: passwordReset ? input.password! : a.password,
+              must_change_credentials: resetByOther ? true : a.must_change_credentials,
+            }
           : a
       )
-    : [...accounts, { profile_id: profileId, email, password: input.password || 'changeme' }];
+    : [...accounts, { profile_id: profileId, email, password: input.password || 'changeme', must_change_credentials: true }];
   writeCollection('accounts', nextAccounts);
 
   return updated;

@@ -62,20 +62,43 @@ function validateUsername(username: string): string {
 }
 
 /**
- * One-time migration: copy legacy `email` records to `username`. Idempotent,
- * runs on bootstrap so browsers seeded during the email-login era keep working.
+ * The seed used these email logins before the username switch. A browser
+ * seeded back then carries them; map the still-factory ones to the clean
+ * usernames so `manager` / `staff` work as documented.
+ */
+const LEGACY_DEFAULTS = [
+  { email: 'manager@charmcafe.ph', password: 'charm2026', username: 'manager' },
+  { email: 'staff@charmcafe.ph', password: 'staff2026', username: 'staff' },
+] as const;
+
+/**
+ * Bootstrap migration (idempotent, runs on every load):
+ *  1. Copy any legacy `email` field into `username`.
+ *  2. If an account is still on a factory default email+password, normalize
+ *     its username to the clean form (`manager@charmcafe.ph` → `manager`).
+ * Step 2 only fires while the factory password is unchanged, so it never
+ * rewrites a username the owner deliberately chose.
  */
 export function migrateAccounts(): void {
   const accounts = readCollection<LocalAccount>('accounts');
   let changed = false;
+
   const migrated = accounts.map((a) => {
-    if (a.username == null && a.email != null) {
+    let username = a.username ?? a.email ?? '';
+    const hadEmailField = 'email' in a;
+
+    const legacy = LEGACY_DEFAULTS.find(
+      (d) => d.email.toLowerCase() === username.toLowerCase() && d.password === a.password
+    );
+    if (legacy) username = legacy.username;
+
+    if (username !== a.username || hadEmailField) {
       changed = true;
-      const { email, ...rest } = a;
-      return { ...rest, username: email };
+      return { profile_id: a.profile_id, username, password: a.password, must_change_credentials: a.must_change_credentials };
     }
     return a;
   });
+
   if (changed) writeCollection('accounts', migrated);
 }
 

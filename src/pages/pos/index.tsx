@@ -5,6 +5,7 @@ import { getCatalog, type Catalog } from '@/services/catalogService';
 import { formatMoney } from '@/utils/format';
 import { cn } from '@/utils/cn';
 import { useCartStore } from '@/stores/cartStore';
+import { ProductImage } from '@/components/ui/ProductImage';
 import type { Product } from '@/types';
 import { ItemModal } from './ItemModal';
 import { CartPanel } from './CartPanel';
@@ -164,32 +165,40 @@ export default function POS() {
                     onClick={() => handleProductClick(product)}
                     disabled={!canSell}
                     className={cn(
-                      'group relative text-left rounded-xl border p-4 min-h-[112px] flex flex-col transition-all',
+                      'group relative text-left rounded-xl border overflow-hidden flex flex-col transition-all',
                       canSell
                         ? 'bg-paper border-line hover:border-caramel hover:shadow-[0_4px_16px_rgba(164,124,88,0.15)] active:scale-[0.98]'
                         : 'bg-cream/50 border-line opacity-60 cursor-not-allowed'
                     )}
                   >
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-caramel">
-                      {categoryName}
-                    </span>
-                    <span className="font-heading text-[15px] font-semibold text-dark-roast mt-1 leading-snug">
-                      {product.name}
-                    </span>
-                    <span className="mt-auto pt-2 text-[12.5px] text-muted">
-                      {variants.map((v, i) => (
-                        <span key={v.id}>
-                          {i > 0 && <span className="text-faint"> · </span>}
-                          {variants.length > 1 && <span className="text-faint">{v.size_label} </span>}
-                          <span className="font-semibold text-espresso">{formatMoney(v.price)}</span>
-                        </span>
-                      ))}
-                    </span>
-                    {!canSell && (
-                      <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-danger-soft text-danger text-[10px] font-bold border border-danger/20">
-                        86'd
+                    {/* Photo */}
+                    <div className="relative w-full aspect-[4/3] bg-cream overflow-hidden">
+                      <ProductImage src={product.image_url} alt={product.name} iconSize={36} />
+                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-paper/90 backdrop-blur-sm text-caramel text-[9.5px] font-bold uppercase tracking-wider border border-line/60">
+                        {categoryName}
                       </span>
-                    )}
+                      {!canSell && (
+                        <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-danger-soft text-danger text-[10px] font-bold border border-danger/20">
+                          86'd
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex flex-col flex-1 p-3">
+                      <span className="font-heading text-[14.5px] font-semibold text-dark-roast leading-snug">
+                        {product.name}
+                      </span>
+                      <span className="mt-auto pt-2 text-[12.5px] text-muted">
+                        {variants.map((v, i) => (
+                          <span key={v.id}>
+                            {i > 0 && <span className="text-faint"> · </span>}
+                            {variants.length > 1 && <span className="text-faint">{v.size_label} </span>}
+                            <span className="font-semibold text-espresso">{formatMoney(v.price)}</span>
+                          </span>
+                        ))}
+                      </span>
+                    </div>
                   </button>
                 );
               })}

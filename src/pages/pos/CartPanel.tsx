@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { LogoMark } from '@/components/ui/Logo';
+import { BrandLogo } from '@/components/ui/Logo';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
 import { completeSale, getOrderById } from '@/services/salesService';
@@ -120,7 +120,7 @@ export function CartPanel({ catalog: _catalog }: { catalog: Catalog }) {
       <div className="flex-1 min-h-0 overflow-y-auto px-5 py-1 space-y-2">
         {cart.items.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center gap-3 text-center py-10">
-            <LogoMark size={40} className="text-taupe/40" />
+            <BrandLogo size={52} className="opacity-30" />
             <p className="text-espresso font-semibold text-[13.5px]">No items yet</p>
             <p className="text-muted text-[12px] max-w-[190px]">
               Tap a product to start a charming order.

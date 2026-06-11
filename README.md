@@ -152,8 +152,6 @@ supabase/migrations/   # Full Postgres backend, ready for reactivation:
 ├── …002_rls.sql       #   Row Level Security for manager/staff
 ├── …003_functions.sql #   complete_sale, void_order_item, process_stock_in, adjust_stock
 └── …004_seed.sql      #   Same demo data as src/data/seed.ts
-
-legacy/                # Original Base44 prototype (reference only, not bundled)
 ```
 
 ---

@@ -33,16 +33,19 @@ Charm Cafe menu, inventory, and demo accounts on first load.
 
 **Initial accounts** (also shown via "Show demo accounts" on the login page):
 
-| Role | Email | Password | Clock-in PIN |
+| Role | Username | Password | Clock-in PIN |
 |---|---|---|---|
-| Manager | `manager@charmcafe.ph` | `charm2026` | 1234 |
-| Staff | `staff@charmcafe.ph` | `staff2026` | 2580 |
+| Manager | `manager` | `charm2026` | 1234 |
+| Staff | `staff` | `staff2026` | 2580 |
+
+Login uses a **username**, not an email — there's no email verification or password reset in
+single-device mode, so a username is the honest fit.
 
 **First sign-in forces a credential reset**: these seeded passwords are temporary — on first
-login each account owner sets their own email + password before entering the app. The same
-applies to staff the manager registers (Staff → Add Staff): the manager hands out a temporary
-password, and the staff member replaces it on their first sign-in. Public demo builds
-(`VITE_DEMO_MODE=true`) skip this so visitors can explore freely.
+login each account owner sets their own name, username, and password before entering the app.
+The same applies to staff the manager registers (Staff → Add Staff): the manager hands out a
+temporary password, and the staff member replaces it on their first sign-in. Public demo
+builds (`VITE_DEMO_MODE=true`) skip this so visitors can explore freely.
 
 ---
 

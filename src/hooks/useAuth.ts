@@ -12,6 +12,7 @@ export function useAuth() {
 
   useEffect(() => {
     seedIfNeeded();
+    authService.migrateAccounts();
     const current = authService.getCurrentProfile();
     setProfile(current);
     setMustChangeCredentials(current ? authService.accountMustChange(current.id) : false);

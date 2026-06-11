@@ -17,7 +17,7 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
   const isEdit = staff !== null;
 
   const [fullName, setFullName] = useState(staff?.full_name ?? '');
-  const [email, setEmail] = useState(staff?.email ?? '');
+  const [username, setUsername] = useState(staff?.username ?? '');
   const [password, setPassword] = useState('');
   const [cafeRole, setCafeRole] = useState<'manager' | 'staff'>(staff?.cafe_role ?? 'staff');
   const [canViewInventory, setCanViewInventory] = useState(staff?.can_view_inventory ?? false);
@@ -37,7 +37,7 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
     mutationFn: async () => {
       const input: StaffInput = {
         fullName,
-        email,
+        username,
         password: password || null,
         cafeRole,
         canViewInventory,
@@ -93,7 +93,7 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
           <div className="flex-1">
             <PrimaryButton
               onClick={() => saveMutation.mutate()}
-              disabled={!fullName.trim() || !email.trim() || saveMutation.isPending}
+              disabled={!fullName.trim() || !username.trim() || saveMutation.isPending}
             >
               {saveMutation.isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Add Staff'}
             </PrimaryButton>
@@ -115,12 +115,13 @@ export function StaffModal({ staff, onClose }: StaffModalProps) {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <label className={labelClass}>Login email</label>
+            <label className={labelClass}>Username</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@charmcafe.ph"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="e.g. maria"
+              autoComplete="off"
               className={inputClass}
             />
           </div>

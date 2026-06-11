@@ -4,17 +4,17 @@
 // creation moves to supabase.auth.admin.
 
 import type { Profile } from '@/types';
-import type { LocalAccount } from '@/services/authService';
+import { accountUsername, type LocalAccount } from '@/services/authService';
 import { readCollection, writeCollection, uid, nowIso } from '@/services/storage';
 
 export interface StaffRow extends Profile {
-  email: string | null;
+  username: string | null;
 }
 
 export async function getStaff(): Promise<StaffRow[]> {
   const profiles = readCollection<Profile>('profiles');
   const accounts = readCollection<LocalAccount>('accounts');
-  const emailByProfile = new Map(accounts.map((a) => [a.profile_id, a.email]));
+  const usernameByProfile = new Map(accounts.map((a) => [a.profile_id, accountUsername(a)]));
 
   return profiles
     .filter((p) => p.is_active)
@@ -22,12 +22,12 @@ export async function getStaff(): Promise<StaffRow[]> {
       if (a.cafe_role !== b.cafe_role) return a.cafe_role === 'manager' ? -1 : 1;
       return a.full_name.localeCompare(b.full_name);
     })
-    .map((p) => ({ ...p, email: emailByProfile.get(p.id) ?? null }));
+    .map((p) => ({ ...p, username: usernameByProfile.get(p.id) ?? null }));
 }
 
 export interface StaffInput {
   fullName: string;
-  email: string;
+  username: string;
   password: string | null; // required on create; optional on edit (blank = unchanged)
   cafeRole: 'manager' | 'staff';
   canViewInventory: boolean;
@@ -41,17 +41,25 @@ function validatePin(pin: string | null): void {
   if (pin && !/^\d{4,6}$/.test(pin)) throw new Error('PIN must be 4–6 digits');
 }
 
+function validateUsername(username: string): string {
+  const u = username.trim();
+  if (u.length < 3) throw new Error('Username must be at least 3 characters');
+  if (!/^[A-Za-z0-9._-]+$/.test(u)) {
+    throw new Error('Username can use letters, numbers, dot, underscore, hyphen — no spaces');
+  }
+  return u;
+}
+
 export function createStaff(input: StaffInput): Profile {
   const name = input.fullName.trim();
-  const email = input.email.trim().toLowerCase();
   if (!name) throw new Error('Full name is required');
-  if (!email) throw new Error('Email is required');
+  const username = validateUsername(input.username);
   if (!input.password || input.password.length < 6) throw new Error('Password must be at least 6 characters');
   validatePin(input.pinCode);
 
   const accounts = readCollection<LocalAccount>('accounts');
-  if (accounts.some((a) => a.email.toLowerCase() === email)) {
-    throw new Error('That email is already in use');
+  if (accounts.some((a) => accountUsername(a).toLowerCase() === username.toLowerCase())) {
+    throw new Error('That username is already taken');
   }
 
   const now = nowIso();
@@ -74,16 +82,15 @@ export function createStaff(input: StaffInput): Profile {
   writeCollection('accounts', [
     ...accounts,
     // Manager hands out a temporary password — the staff member sets their own on first sign-in
-    { profile_id: profile.id, email, password: input.password, must_change_credentials: true },
+    { profile_id: profile.id, username, password: input.password, must_change_credentials: true },
   ]);
   return profile;
 }
 
 export function updateStaff(profileId: string, input: StaffInput, currentUserId?: string): Profile {
   const name = input.fullName.trim();
-  const email = input.email.trim().toLowerCase();
   if (!name) throw new Error('Full name is required');
-  if (!email) throw new Error('Email is required');
+  const username = validateUsername(input.username);
   validatePin(input.pinCode);
 
   const profiles = readCollection<Profile>('profiles');
@@ -91,8 +98,8 @@ export function updateStaff(profileId: string, input: StaffInput, currentUserId?
   if (!profile) throw new Error('Staff member not found');
 
   const accounts = readCollection<LocalAccount>('accounts');
-  if (accounts.some((a) => a.profile_id !== profileId && a.email.toLowerCase() === email)) {
-    throw new Error('That email is already in use');
+  if (accounts.some((a) => a.profile_id !== profileId && accountUsername(a).toLowerCase() === username.toLowerCase())) {
+    throw new Error('That username is already taken');
   }
 
   const updated: Profile = {
@@ -117,14 +124,14 @@ export function updateStaff(profileId: string, input: StaffInput, currentUserId?
     ? accounts.map((a) =>
         a.profile_id === profileId
           ? {
-              ...a,
-              email,
+              profile_id: a.profile_id,
+              username,
               password: passwordReset ? input.password! : a.password,
               must_change_credentials: resetByOther ? true : a.must_change_credentials,
             }
           : a
       )
-    : [...accounts, { profile_id: profileId, email, password: input.password || 'changeme', must_change_credentials: true }];
+    : [...accounts, { profile_id: profileId, username, password: input.password || 'changeme', must_change_credentials: true }];
   writeCollection('accounts', nextAccounts);
 
   return updated;

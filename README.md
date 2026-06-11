@@ -2,7 +2,7 @@
 
 > ### ☕ [Live Demo →](https://charm-cafe-portfolio-showcase.vercel.app)
 >
-> Sign in as **`manager@charmcafe.ph` / `charm2026`** and explore everything — ring up a sale
+> Sign in with username **`manager`** / password **`charm2026`** and explore everything — ring up a sale
 > on the POS, receive a delivery in Inventory, run payroll, check the P&L in Analytics.
 > Every visitor gets their **own private sandbox** (all data lives in your browser's
 > localStorage), so nothing you do affects anyone else. Best viewed at tablet/desktop width.

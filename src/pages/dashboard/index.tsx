@@ -51,7 +51,7 @@ export default function Dashboard() {
       subtitle={`${todayLabel()} · Here's how the cafe is doing today.`}
     >
       {/* KPI Row */}
-      <div className="grid grid-cols-2 xl:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-6">
         <MetricCard label="Revenue Today" value={s ? formatMoney(s.revenue) : '—'} tone="dark" icon={<DollarSign size={16} />} />
         <MetricCard label="Orders Today" value={s ? String(s.orders) : '—'} icon={<ShoppingCart size={16} />} />
         <MetricCard label="Avg Order" value={s ? formatMoney(s.aov) : '—'} icon={<TrendingUp size={16} />} />
@@ -70,7 +70,7 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-4">
 
         {/* Left column */}
         <div className="flex flex-col gap-4">

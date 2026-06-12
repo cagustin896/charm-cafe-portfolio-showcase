@@ -11,7 +11,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['favicon.ico', 'charm-cafe-logo.png', 'apple-touch-icon.png'],
+      includeAssets: ['favicon.png', 'charm-cafe-logo.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'Charm Cafe Management System',
         short_name: 'Charm Cafe',

@@ -91,7 +91,7 @@ export default function Analytics() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 xl:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
         <MetricCard label="Revenue" value={s ? formatMoney(s.revenue) : '—'} tone="dark" />
         <MetricCard label="Orders" value={s ? String(s.orders) : '—'} />
         <MetricCard label="Avg Order" value={s ? formatMoney(s.aov) : '—'} />

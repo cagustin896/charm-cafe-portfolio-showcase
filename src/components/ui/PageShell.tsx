@@ -37,7 +37,7 @@ export function MetricCard({ label, value, detail, tone = 'default', icon }: Met
   return (
     <div
       className={cn(
-        'rounded-xl border p-5 min-h-[96px]',
+        'rounded-xl border p-4 xl:p-5 min-h-[92px] xl:min-h-[96px]',
         tone === 'dark' && 'bg-espresso border-espresso text-paper',
         tone !== 'dark' && 'bg-paper border-line'
       )}
@@ -50,7 +50,7 @@ export function MetricCard({ label, value, detail, tone = 'default', icon }: Met
       </div>
       <p
         className={cn(
-          'text-[26px] font-heading font-semibold mt-3 leading-none',
+          'text-[22px] xl:text-[26px] font-heading font-semibold mt-2.5 xl:mt-3 leading-none whitespace-nowrap',
           tone === 'dark' && 'text-paper',
           tone === 'warning' && 'text-amber',
           tone === 'success' && 'text-sage',
